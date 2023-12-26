@@ -11,7 +11,7 @@ public class Challenge {
         this.description = description;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
