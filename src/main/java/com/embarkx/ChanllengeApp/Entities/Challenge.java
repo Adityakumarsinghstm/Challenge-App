@@ -1,7 +1,7 @@
 package com.embarkx.ChanllengeApp.Entities;
 
 public class Challenge {
-    private long id;
+    private Long id;
     private String month;
     private String description;
 
