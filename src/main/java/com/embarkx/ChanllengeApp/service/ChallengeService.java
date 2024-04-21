@@ -12,10 +12,10 @@ public class ChallengeService {
 
     private List<Challenge> challenges = new ArrayList<>();
     private long nextId = 1L;
-    ChallengeService()
+    public ChallengeService()
     {
-        Challenge challenge1 = new Challenge(1,"january","Learning a new Programming language");
-        challenges.add(challenge1);
+        //Challenge challenge1 = new Challenge(1,"january","Learning a new Programming language");
+        //challenges.add(challenge1);
     }
 
     public List<Challenge> getAllChallenges()
