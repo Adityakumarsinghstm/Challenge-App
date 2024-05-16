@@ -1,16 +1,22 @@
 package com.embarkx.ChanllengeApp.service;
 
 import com.embarkx.ChanllengeApp.Entities.Challenge;
+import com.embarkx.ChanllengeApp.Repository.ChallengeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ChallengeService {
 
-    private List<Challenge> challenges = new ArrayList<>();
+    @Autowired
+    private ChallengeRepository challengeRepository;
+    //private List<Challenge> challenges = new ArrayList<>();
     private long nextId = 1L;
     public ChallengeService()
     {
@@ -20,7 +26,7 @@ public class ChallengeService {
 
     public List<Challenge> getAllChallenges()
     {
-        return challenges;
+        return challengeRepository.findAll();
     }
 
     public boolean addChallenges(@RequestBody Challenge challenge)
@@ -28,7 +34,7 @@ public class ChallengeService {
         if(challenge!=null)
         {
             challenge.setId(nextId++);
-            challenges.add(challenge);
+            challengeRepository.save(challenge);
             return true;
         }
         else {
@@ -38,28 +44,31 @@ public class ChallengeService {
     }
     public Challenge getChallengeByMonth( String month)
     {
-        for (Challenge challenge:challenges) {
-            if(challenge.getMonth().equalsIgnoreCase(month))
-            {
-                return challenge;
-            }
-        }
-        return null;
+        Optional<Challenge> challenge = challengeRepository.findByMonthIgnoreCase(month);
+
+        return challenge.orElse(null);
     }
 
     public boolean updateChallenge(Long id, Challenge updatedChallenge) {
-        for (Challenge challenge: challenges) {
-            if(challenge.getId().equals(id))
-            {
-                challenge.setMonth(updatedChallenge.getMonth());
-                challenge.setDescription(updatedChallenge.getDescription());
-                return true;
-            }
+        Optional<Challenge> challenge = challengeRepository.findById(id);
+        if(challenge.isPresent())
+        {
+            Challenge challengeToUpdate = challenge.get();
+            challengeToUpdate.setMonth(updatedChallenge.getMonth());
+            challengeToUpdate.setDescription(updatedChallenge.getDescription());
+            challengeRepository.save(challengeToUpdate);
+            return true;
         }
         return false;
     }
 
     public boolean deleteChallenge(Long id) {
-        return challenges.removeIf(challenge -> challenge.getId().equals(id));
+        Optional<Challenge> challenge = challengeRepository.findById(id);
+        if(challenge.isPresent())
+        {
+            challengeRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
